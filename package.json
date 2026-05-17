@@ -1,0 +1,65 @@
+{
+  "name": "@lily-protocol/agentlily-runtime",
+  "version": "0.1.0",
+  "description": "Contributor-ready runtime foundation for AgentLily autonomous execution on Stellar.",
+  "license": "Apache-2.0",
+  "private": false,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint src tests vitest.config.ts",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test"
+  },
+  "keywords": [
+    "agent",
+    "runtime",
+    "stellar",
+    "autonomous-agents",
+    "lily-protocol"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lily-protocol/agentlily-runtime.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lily-protocol/agentlily-runtime/issues"
+  },
+  "homepage": "https://github.com/lily-protocol/agentlily-runtime#readme",
+  "author": "Lily Protocol",
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@types/node": "^22.15.30",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "globals": "^16.1.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1",
+    "vitest": "^3.2.4"
+  }
+}
