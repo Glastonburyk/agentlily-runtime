@@ -46,6 +46,8 @@ export interface RuntimeEventBusOptions {
 
 export const DEFAULT_MAX_LISTENERS = 100;
 
+const DEFAULT_MAX_LISTENERS = 100;
+
 export class RuntimeEventBus {
   private readonly listeners = new Map<
     RuntimeEventName,
