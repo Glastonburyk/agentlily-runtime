@@ -189,4 +189,14 @@ export class JsonFileMemoryStore implements MemoryStore {
   public async clear(): Promise<void> {
     this.entries.length = 0;
   }
+
+  /** Returns the current number of stored entries. */
+  public get size(): number {
+    return this.entries.length;
+  }
+
+  /** Returns the configured maximum capacity. */
+  public get capacity(): number {
+    return this.maxEntries;
+  }
 }
