@@ -1,5 +1,7 @@
 import { assertMaxToolCalls } from "../guards/runtime-guards.js";
 import type { RuntimeContext } from "../runtime/context.js";
+import type { RuntimeLogger } from "../logger/runtime-logger.js";
+import type { RuntimeEventBus } from "../events/runtime-events.js";
 import { ToolRegistry } from "../tools/tool-registry.js";
 
 export class ActionExecutor {
@@ -26,6 +28,15 @@ export class ActionExecutor {
 
     this.toolCallCounts.set(context.taskId, currentCount + 1);
     const tool = this.toolRegistry.get(toolName);
-    return (await tool.execute({ payload, context })) as TResult;
+    const startedAt = Date.now();
+    const result = (await tool.execute({ payload, context })) as TResult;
+    const durationMs = Math.max(0, Date.now() - startedAt);
+
+    this.logger?.info("Tool invocation completed.", {
+      toolName,
+      durationMs
+    });
+
+    return result;
   }
 }
