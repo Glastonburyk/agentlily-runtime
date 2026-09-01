@@ -5,9 +5,12 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   AgentRuntime,
+  createPaymentPrepTool,
   InMemoryRuntimeLogger,
+  PAYMENT_PREP_TOOL_NAME,
   RuntimeEventBus
 } from "../src/index.js";
+import type { PaymentPrepPayload, PaymentPrepResult } from "../src/index.js";
 
 describe("AgentRuntime", () => {
   it("executes a happy-path task and records memory", async () => {
