@@ -19,7 +19,6 @@ describe("AgentRuntime", () => {
       runtimeId: "runtime-test",
       logger
     });
-
     runtime.registerTool({
       name: "echo",
       description: "Echoes a provided message.",
@@ -30,9 +29,7 @@ describe("AgentRuntime", () => {
         };
       }
     });
-
     await runtime.start();
-
     const result = await runtime.executeTask<
       { message: string },
       { echoed: string; agentId: string }
@@ -43,11 +40,9 @@ describe("AgentRuntime", () => {
       input: "Echo this payload",
       payload: { message: "hello" }
     });
-
     const memory = await runtime
       .getDependencies()
       .memoryStore.listByAgent("agent-1");
-
     expect(result.output).toEqual({ echoed: "hello", agentId: "agent-1" });
     expect(memory).toHaveLength(1);
     expect(memory[0]?.taskId).toBe("task-1");
@@ -68,12 +63,10 @@ describe("AgentRuntime", () => {
     eventBus.on("runtime.task.completed", (event) => {
       events.push(event.name);
     });
-
     const runtime = new AgentRuntime({
       runtimeId: "runtime-events",
       eventBus
     });
-
     runtime.registerTool({
       name: "noop",
       description: "Returns a static result.",
@@ -81,7 +74,6 @@ describe("AgentRuntime", () => {
         return { ok: true };
       }
     });
-
     await runtime.start();
     await runtime.executeTask({
       taskId: "task-2",
@@ -90,7 +82,6 @@ describe("AgentRuntime", () => {
       input: "Run noop",
       payload: {}
     });
-
     expect(events).toEqual([
       "runtime.started",
       "runtime.task.received",
@@ -100,7 +91,6 @@ describe("AgentRuntime", () => {
 
   it("rejects execution before startup", async () => {
     const runtime = new AgentRuntime({ runtimeId: "runtime-not-started" });
-
     await expect(
       runtime.executeTask({
         taskId: "task-3",
@@ -117,7 +107,6 @@ describe("AgentRuntime", () => {
   it("surfaces tool lookup failures as typed runtime errors", async () => {
     const runtime = new AgentRuntime({ runtimeId: "runtime-missing-tool" });
     await runtime.start();
-
     await expect(
       runtime.executeTask({
         taskId: "task-4",
