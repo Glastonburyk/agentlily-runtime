@@ -45,6 +45,11 @@ export class ConsoleRuntimeLogger implements RuntimeLogger {
     console.warn(message, metadata ?? {});
   }
 
+  public warn(message: string, metadata?: Record<string, unknown>): void {
+    if (!this.shouldLog("warn")) return;
+    console.warn(message, metadata ?? {});
+  }
+
   public error(message: string, metadata?: Record<string, unknown>): void {
     if (this.shouldLog("error")) {
       console.error(message, metadata ?? {});
