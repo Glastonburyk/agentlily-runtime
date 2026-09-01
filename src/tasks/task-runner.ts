@@ -45,7 +45,7 @@ export class TaskRunner {
         taskId: task.taskId,
         input: task.input,
         output,
-        recordedAt: completedAt
+        recordedAt: completedAt.toISOString()
       });
 
       return {
