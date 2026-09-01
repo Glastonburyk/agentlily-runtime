@@ -1,6 +1,18 @@
 export interface RuntimeLogger {
-  info(message: string, metadata?: Record<string, unknown>): void;
-  error(message: string, metadata?: Record<string, unknown>): void;
+ info(message: string, metadata?: Record<string, unknown>): void;
+ error(message: string, metadata?: Record<string, unknown>): void;
+}
+
+export type LogLevel = "info" | "warn" | "error";
+
+const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
+  info: 0,
+  warn: 1,
+  error: 2,
+};
+
+export interface ConsoleRuntimeLoggerOptions {
+  level?: LogLevel;
 }
 
 export type RuntimeLogLevel = "info" | "warn" | "error";
@@ -26,6 +38,11 @@ export class ConsoleRuntimeLogger implements RuntimeLogger {
     if (this.shouldLog("info")) {
       console.info(message, metadata ?? {});
     }
+  }
+
+  public warn(message: string, metadata?: Record<string, unknown>): void {
+    if (!this.shouldLog("warn")) return;
+    console.warn(message, metadata ?? {});
   }
 
   public error(message: string, metadata?: Record<string, unknown>): void {
