@@ -6,6 +6,7 @@ import type { RuntimeStateStore } from "../state/runtime-state.js";
 
 export interface RuntimeOptions {
   runtimeId: string;
+  maxToolCallsPerTask?: number;
   memoryStore?: MemoryStore;
   memoryStoragePath?: string | undefined;
   modelProvider?: ModelProvider;
