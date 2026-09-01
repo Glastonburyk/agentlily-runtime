@@ -114,4 +114,8 @@ export class RuntimeEventBus {
       }
     }
   }
+
+  public listenerCount(name: RuntimeEventName): number {
+    return this.listeners.get(name)?.size ?? 0;
+  }
 }
