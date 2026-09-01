@@ -50,6 +50,14 @@ export class ConsoleRuntimeLogger implements RuntimeLogger {
     console.warn(message, metadata ?? {});
   }
 
+  public warn(message: string, metadata?: Record<string, unknown>): void {
+    console.warn(message, metadata ?? {});
+  }
+
+  public debug(message: string, metadata?: Record<string, unknown>): void {
+    console.debug(message, metadata ?? {});
+  }
+
   public error(message: string, metadata?: Record<string, unknown>): void {
     if (this.shouldLog("error")) {
       console.error(message, metadata ?? {});
@@ -67,7 +75,7 @@ export interface InMemoryRuntimeLoggerOptions {
 
 export class InMemoryRuntimeLogger implements RuntimeLogger {
   public readonly entries: Array<{
-    level: "info" | "error";
+    level: "info" | "warn" | "debug" | "error";
     message: string;
     metadata: Record<string, unknown> | undefined;
   }> = [];
@@ -79,6 +87,14 @@ export class InMemoryRuntimeLogger implements RuntimeLogger {
 
   public info(message: string, metadata?: Record<string, unknown>): void {
     this.appendEntry("info", message, metadata);
+  }
+
+  public warn(message: string, metadata?: Record<string, unknown>): void {
+    this.entries.push({ level: "warn", message, metadata });
+  }
+
+  public debug(message: string, metadata?: Record<string, unknown>): void {
+    this.entries.push({ level: "debug", message, metadata });
   }
 
   public error(message: string, metadata?: Record<string, unknown>): void {
