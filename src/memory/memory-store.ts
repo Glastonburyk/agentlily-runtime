@@ -39,6 +39,13 @@ export interface MemoryStore {
   size?(): Promise<number>;
 }
 
+export interface InMemoryMemoryStoreOptions {
+  /** Maximum number of entries to retain in memory before FIFO eviction. Defaults to 10_000. */
+  maxEntries?: number;
+}
+
+export const DEFAULT_MAX_MEMORY_ENTRIES = 10_000;
+
 export class InMemoryMemoryStore implements MemoryStore {
   private readonly entries: MemoryEntry[] = [];
   private readonly maxEntries: number;
@@ -177,5 +184,9 @@ export class JsonFileMemoryStore implements MemoryStore {
   public async listByAgent(agentId: string): Promise<MemoryEntry[]> {
     const entries = await this.loadEntries();
     return entries.filter((entry) => entry.agentId === agentId);
+  }
+
+  public async clear(): Promise<void> {
+    this.entries.length = 0;
   }
 }
