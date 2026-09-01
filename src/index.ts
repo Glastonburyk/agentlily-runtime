@@ -35,6 +35,8 @@ export type {
 export type { RuntimeErrorCode } from "./errors/runtime-errors.js";
 export type {
   RuntimeEvent,
+  RuntimeEventBusOptions,
+  RuntimeEventListener,
   RuntimeEventMap,
   RuntimeEventName,
   RuntimeEventListener
