@@ -72,7 +72,7 @@ export class RuntimeEventBus {
     this.listeners.set(name, existing);
 
     return () => {
-      existing.delete(listener as RuntimeEventListener<RuntimeEventName>);
+      this.off(name, listener);
     };
   }
 

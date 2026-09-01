@@ -3,8 +3,12 @@ export { createRuntimeDependencies } from "./runtime/bootstrap.js";
 
 export type { RuntimeContext } from "./runtime/context.js";
 export type { RuntimeOptions } from "./runtime/types.js";
+export type { RuntimeStopOptions } from "./runtime/agent-runtime.js";
 
-export { AgentInstanceManager } from "./agents/agent-instance-manager.js";
+export {
+  AgentInstanceManager,
+  type AgentInstanceManagerOptions
+} from "./agents/agent-instance-manager.js";
 export { ActionExecutor } from "./actions/action-executor.js";
 export { RuntimeError } from "./errors/runtime-errors.js";
 export { RuntimeEventBus } from "./events/runtime-events.js";
@@ -32,7 +36,8 @@ export type { RuntimeErrorCode } from "./errors/runtime-errors.js";
 export type {
   RuntimeEvent,
   RuntimeEventMap,
-  RuntimeEventName
+  RuntimeEventName,
+  RuntimeEventListener
 } from "./events/runtime-events.js";
 export type {
   ConsoleRuntimeLoggerOptions,
