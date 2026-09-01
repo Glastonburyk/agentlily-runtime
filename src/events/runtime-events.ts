@@ -1,4 +1,8 @@
 export interface RuntimeEventMap {
+  "runtime.internal.error": {
+    eventName: RuntimeEventName;
+    message: string;
+  };
   "runtime.started": { runtimeId: string; occurredAt: string };
   "runtime.stopped": { runtimeId: string; occurredAt: string };
   "runtime.task.received": {
