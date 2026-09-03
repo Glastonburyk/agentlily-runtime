@@ -40,7 +40,7 @@ describe("RuntimeError construction and code values (Issue #110)", () => {
       "TOOL_NOT_FOUND",
       "DUPLICATE_TOOL",
       "INVALID_TASK",
-      "EXECUTION_FAILED",
+      "EXECUTION_FAILED"
     ] as const;
 
     for (const code of codes) {

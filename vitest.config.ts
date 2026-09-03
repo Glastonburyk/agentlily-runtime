@@ -11,14 +11,14 @@ export default defineConfig({
         "src/runtime/context.ts",
         "src/tasks/task-types.ts",
         "src/providers/model-provider.ts",
-        "src/state/runtime-state.ts",
+        "src/state/runtime-state.ts"
       ],
       thresholds: {
         lines: 85,
         functions: 75,
         branches: 70,
-        statements: 85,
-      },
-    },
-  },
+        statements: 85
+      }
+    }
+  }
 });

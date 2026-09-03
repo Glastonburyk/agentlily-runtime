@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { RuntimeEventBus, type RuntimeEvent } from "../../src/events/runtime-events.js";
+import {
+  RuntimeEventBus,
+  type RuntimeEvent
+} from "../../src/events/runtime-events.js";
 
 describe("RuntimeEventBus Listener Isolation & Error Emission", () => {
   it("isolates throwing listeners so other listeners continue executing", () => {
@@ -42,7 +45,9 @@ describe("RuntimeEventBus Listener Isolation & Error Emission", () => {
 
     expect(internalErrors).toHaveLength(1);
     expect(internalErrors[0]?.payload.eventName).toBe("runtime.task.received");
-    expect(internalErrors[0]?.payload.error).toBe("unhandled subscription fault");
+    expect(internalErrors[0]?.payload.errorMessage).toBe(
+      "unhandled subscription fault"
+    );
   });
 
   it("tracks listener counts accurately and unregisters cleanly", () => {

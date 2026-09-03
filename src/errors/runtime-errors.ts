@@ -1,6 +1,7 @@
 export type RuntimeErrorCode =
   | "RUNTIME_NOT_STARTED"
   | "RUNTIME_ALREADY_STARTED"
+  | "RUNTIME_ALREADY_STOPPED"
   | "TOOL_NOT_FOUND"
   | "DUPLICATE_TOOL"
   | "INVALID_TASK"
@@ -38,4 +39,3 @@ export class RuntimeError extends Error {
     };
   }
 }
-

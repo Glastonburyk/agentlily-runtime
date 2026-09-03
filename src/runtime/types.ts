@@ -3,6 +3,7 @@ import type { RuntimeLogger } from "../logger/runtime-logger.js";
 import type { MemoryStore } from "../memory/memory-store.js";
 import type { ModelProvider } from "../providers/model-provider.js";
 import type { RuntimeStateStore } from "../state/runtime-state.js";
+import type { ToolDefinition } from "../tools/types.js";
 
 export interface RuntimeOptions {
   runtimeId: string;
@@ -13,4 +14,5 @@ export interface RuntimeOptions {
   logger?: RuntimeLogger;
   stateStore?: RuntimeStateStore;
   eventBus?: RuntimeEventBus;
+  tools?: ToolDefinition[];
 }

@@ -47,13 +47,19 @@ describe("createRuntimeDependencies default wiring (Issue #114)", () => {
 
   it("respects injected memoryStore over default", () => {
     const customStore = new InMemoryMemoryStore();
-    const deps = createRuntimeDependencies({ runtimeId: "custom-mem", memoryStore: customStore });
+    const deps = createRuntimeDependencies({
+      runtimeId: "custom-mem",
+      memoryStore: customStore
+    });
     expect(deps.memoryStore).toBe(customStore);
   });
 
   it("respects injected eventBus over default", () => {
     const customBus = new RuntimeEventBus();
-    const deps = createRuntimeDependencies({ runtimeId: "custom-events", eventBus: customBus });
+    const deps = createRuntimeDependencies({
+      runtimeId: "custom-events",
+      eventBus: customBus
+    });
     expect(deps.eventBus).toBe(customBus);
   });
 });

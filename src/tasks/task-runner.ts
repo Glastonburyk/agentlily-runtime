@@ -9,10 +9,7 @@ export class TaskRunner {
   private readonly actionExecutor: ActionExecutor;
   private readonly memoryStore: MemoryStore;
 
-  public constructor(
-    actionExecutor: ActionExecutor,
-    memoryStore: MemoryStore
-  ) {
+  public constructor(actionExecutor: ActionExecutor, memoryStore: MemoryStore) {
     this.actionExecutor = actionExecutor;
     this.memoryStore = memoryStore;
   }
@@ -45,7 +42,7 @@ export class TaskRunner {
         taskId: task.taskId,
         input: task.input,
         output,
-        recordedAt: completedAt.toISOString()
+        recordedAt: completedAt
       });
 
       return {
@@ -58,13 +55,15 @@ export class TaskRunner {
         durationMs
       };
     } catch (error) {
+      // Typed runtime errors propagate unchanged; anything else thrown by a
+      // tool or the memory store is reported as an unexpected execution
+      // failure while preserving the original error message.
       if (error instanceof RuntimeError) {
         throw error;
       }
-
       throw new RuntimeError(
         "EXECUTION_FAILED",
-        "Task execution failed.",
+        error instanceof Error ? error.message : "Task execution failed.",
         error instanceof Error ? { cause: error.message } : undefined
       );
     }

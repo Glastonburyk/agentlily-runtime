@@ -4,7 +4,11 @@ import { RuntimeError } from "../src/index.js";
 describe("RuntimeError", () => {
   it("serializes name, code, message, details, and stack via toJSON", () => {
     const details = { toolName: "echo", attempt: 3 };
-    const err = new RuntimeError("EXECUTION_FAILED", "Execution failed", details);
+    const err = new RuntimeError(
+      "EXECUTION_FAILED",
+      "Execution failed",
+      details
+    );
 
     const json = err.toJSON();
 

@@ -8,12 +8,16 @@ describe("ActionExecutor tool dispatch and payload passthrough (Issue #115)", ()
     registry.register({
       name: "add",
       description: "Adds two numbers",
-      execute: ({ payload }) => ({ sum: (payload as any).a + (payload as any).b }),
+      execute: ({ payload }) => ({
+        sum: (payload as any).a + (payload as any).b
+      })
     });
     registry.register({
       name: "multiply",
       description: "Multiplies two numbers",
-      execute: ({ payload }) => ({ product: (payload as any).a * (payload as any).b }),
+      execute: ({ payload }) => ({
+        product: (payload as any).a * (payload as any).b
+      })
     });
 
     const executor = new ActionExecutor(registry);
@@ -35,11 +39,14 @@ describe("ActionExecutor tool dispatch and payload passthrough (Issue #115)", ()
       execute: ({ payload }) => {
         receivedPayload = payload;
         return { ok: true };
-      },
+      }
     });
 
     const executor = new ActionExecutor(registry);
-    const complexPayload = { nested: { arr: [1, 2, 3], flag: true }, label: "test" };
+    const complexPayload = {
+      nested: { arr: [1, 2, 3], flag: true },
+      label: "test"
+    };
     await executor.execute("capture", complexPayload, {} as any);
 
     expect(receivedPayload).toBe(complexPayload);
@@ -54,7 +61,7 @@ describe("ActionExecutor tool dispatch and payload passthrough (Issue #115)", ()
       execute: ({ context }) => {
         receivedContext = context;
         return { ok: true };
-      },
+      }
     });
 
     const executor = new ActionExecutor(registry);
@@ -80,7 +87,7 @@ describe("ActionExecutor tool dispatch and payload passthrough (Issue #115)", ()
       description: "Returns a promise",
       execute: async ({ payload }) => {
         return { value: (payload as any).x * 10 };
-      },
+      }
     });
 
     const executor = new ActionExecutor(registry);

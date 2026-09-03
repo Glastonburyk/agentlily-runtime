@@ -21,7 +21,11 @@ export class InMemoryRuntimeStateStore implements RuntimeStateStore {
   }
 
   public async put(key: string, value: unknown): Promise<void> {
-    if (this.maxEntries > 0 && !this.store.has(key) && this.store.size >= this.maxEntries) {
+    if (
+      this.maxEntries > 0 &&
+      !this.store.has(key) &&
+      this.store.size >= this.maxEntries
+    ) {
       const oldestKey = this.store.keys().next().value;
       if (oldestKey !== undefined) {
         this.store.delete(oldestKey);

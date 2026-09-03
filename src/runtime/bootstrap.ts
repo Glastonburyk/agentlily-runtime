@@ -14,6 +14,12 @@ import type { RuntimeOptions } from "./types.js";
 
 export function createRuntimeDependencies(options: RuntimeOptions) {
   const toolRegistry = new ToolRegistry();
+  if (options.tools !== undefined) {
+    for (const tool of options.tools) {
+      toolRegistry.register(tool);
+    }
+  }
+
   const memoryStore =
     options.memoryStore ??
     (options.memoryStoragePath
@@ -27,7 +33,8 @@ export function createRuntimeDependencies(options: RuntimeOptions) {
   const agentManager = new AgentInstanceManager();
   const actionExecutor = new ActionExecutor(
     toolRegistry,
-    options.maxToolCallsPerTask
+    options.maxToolCallsPerTask,
+    eventBus
   );
   const taskRunner = new TaskRunner(actionExecutor, memoryStore);
 

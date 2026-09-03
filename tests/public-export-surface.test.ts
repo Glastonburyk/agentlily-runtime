@@ -13,7 +13,7 @@ describe("Public export surface of src/index.ts", () => {
     "UnconfiguredModelProvider",
     "InMemoryRuntimeStateStore",
     "TaskRunner",
-    "ToolRegistry",
+    "ToolRegistry"
   ];
 
   const expectedFunctions = ["createRuntimeDependencies"];

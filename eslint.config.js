@@ -31,14 +31,24 @@ export default tseslint.config(
     }
   },
   {
-    files: ["tests/**/*.ts"],
+    // Test suites use intentionally loose stubs/mocks and assert on throw
+    // primitives, so the production type-safety rules are relaxed here.
+    files: ["tests/**/*.ts", "src/**/__tests__/**/*.ts"],
     languageOptions: {
       globals: {
         ...globals.node
       }
     },
     rules: {
-      "@typescript-eslint/no-unsafe-assignment": "off"
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/only-throw-error": "off"
     }
   },
   prettier

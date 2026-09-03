@@ -11,7 +11,10 @@ describe("TaskRunner INVALID_TASK rejection paths", () => {
 
   it("rejects with INVALID_TASK when taskId is empty", async () => {
     try {
-      await runner.run({ taskId: "", agentId: "a", toolName: "t", input: "i", payload: {} }, ctx);
+      await runner.run(
+        { taskId: "", agentId: "a", toolName: "t", input: "i", payload: {} },
+        ctx
+      );
       expect.fail("should have thrown");
     } catch (e) {
       const err = e as RuntimeError;
@@ -22,7 +25,16 @@ describe("TaskRunner INVALID_TASK rejection paths", () => {
 
   it("rejects with INVALID_TASK when agentId is whitespace-only", async () => {
     try {
-      await runner.run({ taskId: "t1", agentId: "   ", toolName: "t", input: "i", payload: {} }, ctx);
+      await runner.run(
+        {
+          taskId: "t1",
+          agentId: "   ",
+          toolName: "t",
+          input: "i",
+          payload: {}
+        },
+        ctx
+      );
       expect.fail("should have thrown");
     } catch (e) {
       const err = e as RuntimeError;
@@ -33,7 +45,10 @@ describe("TaskRunner INVALID_TASK rejection paths", () => {
 
   it("rejects with INVALID_TASK when toolName is empty", async () => {
     try {
-      await runner.run({ taskId: "t1", agentId: "a1", toolName: "", input: "i", payload: {} }, ctx);
+      await runner.run(
+        { taskId: "t1", agentId: "a1", toolName: "", input: "i", payload: {} },
+        ctx
+      );
       expect.fail("should have thrown");
     } catch (e) {
       const err = e as RuntimeError;
@@ -44,7 +59,16 @@ describe("TaskRunner INVALID_TASK rejection paths", () => {
 
   it("rejects with INVALID_TASK when input is missing or blank", async () => {
     try {
-      await runner.run({ taskId: "t1", agentId: "a1", toolName: "t", input: "\n\t", payload: {} }, ctx);
+      await runner.run(
+        {
+          taskId: "t1",
+          agentId: "a1",
+          toolName: "t",
+          input: "\n\t",
+          payload: {}
+        },
+        ctx
+      );
       expect.fail("should have thrown");
     } catch (e) {
       const err = e as RuntimeError;

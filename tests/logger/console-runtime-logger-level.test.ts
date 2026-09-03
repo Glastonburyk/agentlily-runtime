@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ConsoleRuntimeLogger } from "../../src/logger/runtime-logger";
+import { ConsoleRuntimeLogger } from "../../src/logger/runtime-logger.js";
 
 describe("ConsoleRuntimeLogger level filtering", () => {
   let infoSpy: ReturnType<typeof vi.spyOn>;

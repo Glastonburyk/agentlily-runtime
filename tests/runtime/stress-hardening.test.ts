@@ -148,7 +148,7 @@ describe("AgentLily Runtime Stress & Hardening Test Suite", () => {
         });
       }
 
-      const size = await store.size();
+      const size = store.size;
       expect(size).toBeLessThanOrEqual(200);
 
       // Verify each agent does not exceed per-agent cap of 50
@@ -158,12 +158,15 @@ describe("AgentLily Runtime Stress & Hardening Test Suite", () => {
       }
 
       // Pagination test
-      const page1 = await store.listByAgent("agent-0", { limit: 10, offset: 0 });
+      const page1 = await store.listByAgent("agent-0", {
+        limit: 10,
+        offset: 0
+      });
       expect(page1.length).toBe(10);
 
       // Clear test
       await store.clear();
-      expect(await store.size()).toBe(0);
+      expect(store.size).toBe(0);
     });
   });
 

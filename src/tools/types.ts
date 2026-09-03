@@ -8,5 +8,6 @@ export interface ToolInvocation<TPayload = unknown> {
 export interface ToolDefinition<TPayload = unknown, TResult = unknown> {
   name: string;
   description: string;
+  inputSchema?: unknown;
   execute(input: ToolInvocation<TPayload>): Promise<TResult> | TResult;
 }

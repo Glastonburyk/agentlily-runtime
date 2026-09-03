@@ -13,10 +13,18 @@ export { ActionExecutor } from "./actions/action-executor.js";
 export { RuntimeError } from "./errors/runtime-errors.js";
 export { RuntimeEventBus } from "./events/runtime-events.js";
 export {
+  assertMaxToolCalls,
+  assertNonEmptyValue,
+  assertRuntimeStarted
+} from "./guards/runtime-guards.js";
+export {
   ConsoleRuntimeLogger,
   InMemoryRuntimeLogger
 } from "./logger/runtime-logger.js";
-export { InMemoryMemoryStore } from "./memory/memory-store.js";
+export {
+  InMemoryMemoryStore,
+  JsonFileMemoryStore
+} from "./memory/memory-store.js";
 export { UnconfiguredModelProvider } from "./providers/model-provider.js";
 export { OpenAICompatibleModelProvider } from "./providers/openai-compatible-provider.js";
 export { InMemoryRuntimeStateStore } from "./state/runtime-state.js";
@@ -38,15 +46,18 @@ export type {
   RuntimeEventBusOptions,
   RuntimeEventListener,
   RuntimeEventMap,
-  RuntimeEventName,
-  RuntimeEventListener
+  RuntimeEventName
 } from "./events/runtime-events.js";
 export type {
   ConsoleRuntimeLoggerOptions,
   RuntimeLogger,
   RuntimeLogLevel
 } from "./logger/runtime-logger.js";
-export type { MemoryEntry, MemoryStore } from "./memory/memory-store.js";
+export type {
+  InMemoryMemoryStoreOptions,
+  MemoryEntry,
+  MemoryStore
+} from "./memory/memory-store.js";
 export type {
   ModelPrompt,
   ModelProvider,

@@ -40,17 +40,45 @@ describe("InMemoryMemoryStore Capacity & Eviction Invariants", () => {
 
     expect(store.size).toBe(3);
     const records = await store.listByAgent("agent-1");
-    expect(records.map((r) => r.taskId)).toEqual(["task-3", "task-4", "task-5"]);
+    expect(records.map((r) => r.taskId)).toEqual([
+      "task-3",
+      "task-4",
+      "task-5"
+    ]);
   });
 
   it("maintains agent isolation across eviction cycles", async () => {
     const store = new InMemoryMemoryStore({ maxEntries: 3 });
 
-    await store.append({ agentId: "agent-A", taskId: "t1", input: "i1", output: 1, recordedAt: "" });
-    await store.append({ agentId: "agent-B", taskId: "t2", input: "i2", output: 2, recordedAt: "" });
-    await store.append({ agentId: "agent-A", taskId: "t3", input: "i3", output: 3, recordedAt: "" });
+    await store.append({
+      agentId: "agent-A",
+      taskId: "t1",
+      input: "i1",
+      output: 1,
+      recordedAt: ""
+    });
+    await store.append({
+      agentId: "agent-B",
+      taskId: "t2",
+      input: "i2",
+      output: 2,
+      recordedAt: ""
+    });
+    await store.append({
+      agentId: "agent-A",
+      taskId: "t3",
+      input: "i3",
+      output: 3,
+      recordedAt: ""
+    });
     // Capacity reached (3). Appending 4th evicts t1
-    await store.append({ agentId: "agent-B", taskId: "t4", input: "i4", output: 4, recordedAt: "" });
+    await store.append({
+      agentId: "agent-B",
+      taskId: "t4",
+      input: "i4",
+      output: 4,
+      recordedAt: ""
+    });
 
     const aEntries = await store.listByAgent("agent-A");
     const bEntries = await store.listByAgent("agent-B");
@@ -61,7 +89,13 @@ describe("InMemoryMemoryStore Capacity & Eviction Invariants", () => {
 
   it("clears all stored memory entries", async () => {
     const store = new InMemoryMemoryStore({ maxEntries: 10 });
-    await store.append({ agentId: "agent-1", taskId: "t1", input: "i1", output: 1, recordedAt: "" });
+    await store.append({
+      agentId: "agent-1",
+      taskId: "t1",
+      input: "i1",
+      output: 1,
+      recordedAt: ""
+    });
     expect(store.size).toBe(1);
     await store.clear();
     expect(store.size).toBe(0);

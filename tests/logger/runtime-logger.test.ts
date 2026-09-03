@@ -1,34 +1,37 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { ConsoleRuntimeLogger, InMemoryRuntimeLogger } from "../../src/logger/runtime-logger.js";
+import {
+  ConsoleRuntimeLogger,
+  InMemoryRuntimeLogger
+} from "../../src/logger/runtime-logger.js";
 
 describe("InMemoryRuntimeLogger", () => {
   it("records info entries with correct level and message", () => {
     const logger = new InMemoryRuntimeLogger();
     logger.info("test message");
     expect(logger.entries).toHaveLength(1);
-    expect(logger.entries[0].level).toBe("info");
-    expect(logger.entries[0].message).toBe("test message");
+    expect(logger.entries[0]!.level).toBe("info");
+    expect(logger.entries[0]!.message).toBe("test message");
   });
 
   it("records error entries with correct level and message", () => {
     const logger = new InMemoryRuntimeLogger();
     logger.error("failure occurred");
     expect(logger.entries).toHaveLength(1);
-    expect(logger.entries[0].level).toBe("error");
-    expect(logger.entries[0].message).toBe("failure occurred");
+    expect(logger.entries[0]!.level).toBe("error");
+    expect(logger.entries[0]!.message).toBe("failure occurred");
   });
 
   it("preserves metadata when provided", () => {
     const logger = new InMemoryRuntimeLogger();
     const meta = { taskId: "t1", agentId: "a1" };
     logger.info("with meta", meta);
-    expect(logger.entries[0].metadata).toEqual(meta);
+    expect(logger.entries[0]!.metadata).toEqual(meta);
   });
 
   it("stores undefined metadata when not provided", () => {
     const logger = new InMemoryRuntimeLogger();
     logger.info("no meta");
-    expect(logger.entries[0].metadata).toBeUndefined();
+    expect(logger.entries[0]!.metadata).toBeUndefined();
   });
 
   it("maintains insertion order across mixed calls", () => {
@@ -36,8 +39,16 @@ describe("InMemoryRuntimeLogger", () => {
     logger.info("first");
     logger.error("second");
     logger.info("third");
-    expect(logger.entries.map(e => e.message)).toEqual(["first", "second", "third"]);
-    expect(logger.entries.map(e => e.level)).toEqual(["info", "error", "info"]);
+    expect(logger.entries.map((e) => e.message)).toEqual([
+      "first",
+      "second",
+      "third"
+    ]);
+    expect(logger.entries.map((e) => e.level)).toEqual([
+      "info",
+      "error",
+      "info"
+    ]);
   });
 });
 

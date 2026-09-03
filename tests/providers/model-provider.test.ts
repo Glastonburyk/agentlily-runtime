@@ -11,7 +11,7 @@ describe("UnconfiguredModelProvider", () => {
   it("returns stable outputText regardless of prompt input", async () => {
     const response = await provider.generate({
       instructions: "ignored-instructions",
-      input: "ignored-input",
+      input: "ignored-input"
     });
 
     expect(response.outputText).toBe(
@@ -29,7 +29,10 @@ describe("UnconfiguredModelProvider", () => {
 
   it("ignores prompt arguments completely", async () => {
     const r1 = await provider.generate({ instructions: "a", input: "b" });
-    const r2 = await provider.generate({ instructions: "completely-different", input: "also-different" });
+    const r2 = await provider.generate({
+      instructions: "completely-different",
+      input: "also-different"
+    });
 
     expect(r1.outputText).toBe(r2.outputText);
   });

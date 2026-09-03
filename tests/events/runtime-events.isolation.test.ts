@@ -1,21 +1,24 @@
-import { describe, it, expect, vi } from 'vitest';
-import { RuntimeEventBus, RuntimeEvent } from '../../src/events/runtime-events';
+import { describe, it, expect, vi } from "vitest";
+import { RuntimeEventBus } from "../../src/events/runtime-events.js";
+import type { RuntimeEvent } from "../../src/events/runtime-events.js";
 
-describe('RuntimeEventBus listener isolation', () => {
-  it('continues delivering to remaining listeners when one throws', () => {
+describe("RuntimeEventBus listener isolation", () => {
+  it("continues delivering to remaining listeners when one throws", () => {
     const bus = new RuntimeEventBus();
     const spy1 = vi.fn();
     const spy2 = vi.fn();
     const spy3 = vi.fn();
 
-    bus.on('runtime.started', spy1);
-    bus.on('runtime.started', () => { throw new Error('boom'); });
-    bus.on('runtime.started', spy2);
-    bus.on('runtime.started', spy3);
+    bus.on("runtime.started", spy1);
+    bus.on("runtime.started", () => {
+      throw new Error("boom");
+    });
+    bus.on("runtime.started", spy2);
+    bus.on("runtime.started", spy3);
 
-    const event: RuntimeEvent<'runtime.started'> = {
-      name: 'runtime.started',
-      payload: { runtimeId: 'r1', occurredAt: new Date().toISOString() },
+    const event: RuntimeEvent<"runtime.started"> = {
+      name: "runtime.started",
+      payload: { runtimeId: "r1", occurredAt: new Date().toISOString() }
     };
 
     expect(() => bus.emit(event)).not.toThrow();
@@ -24,35 +27,46 @@ describe('RuntimeEventBus listener isolation', () => {
     expect(spy3).toHaveBeenCalledTimes(1);
   });
 
-  it('emit never propagates listener errors to caller', () => {
+  it("emit never propagates listener errors to caller", () => {
     const bus = new RuntimeEventBus();
-    bus.on('runtime.task.failed', () => { throw new Error('listener failure'); });
+    bus.on("runtime.task.failed", () => {
+      throw new Error("listener failure");
+    });
 
-    const event: RuntimeEvent<'runtime.task.failed'> = {
-      name: 'runtime.task.failed',
-      payload: { runtimeId: 'r1', taskId: 't1', agentId: 'a1', reason: 'test' },
+    const event: RuntimeEvent<"runtime.task.failed"> = {
+      name: "runtime.task.failed",
+      payload: { runtimeId: "r1", taskId: "t1", agentId: "a1", reason: "test" }
     };
 
     expect(() => bus.emit(event)).not.toThrow();
   });
 
-  it('logs listener errors without breaking delivery', () => {
+  it("logs listener errors without breaking delivery", () => {
     const bus = new RuntimeEventBus();
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const nextListener = vi.fn();
 
-    bus.on('runtime.task.completed', () => { throw new Error('isolated error'); });
-    bus.on('runtime.task.completed', nextListener);
+    bus.on("runtime.task.completed", () => {
+      throw new Error("isolated error");
+    });
+    bus.on("runtime.task.completed", nextListener);
 
-    const event: RuntimeEvent<'runtime.task.completed'> = {
-      name: 'runtime.task.completed',
-      payload: { runtimeId: 'r1', taskId: 't1', agentId: 'a1', toolName: 'test-tool' },
+    const event: RuntimeEvent<"runtime.task.completed"> = {
+      name: "runtime.task.completed",
+      payload: {
+        runtimeId: "r1",
+        taskId: "t1",
+        agentId: "a1",
+        toolName: "test-tool"
+      }
     };
 
     bus.emit(event);
 
     expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[RuntimeEventBus] Listener error during "runtime.task.completed"'),
+      expect.stringContaining(
+        '[RuntimeEventBus] Listener error during "runtime.task.completed"'
+      ),
       expect.any(Error)
     );
     expect(nextListener).toHaveBeenCalledTimes(1);

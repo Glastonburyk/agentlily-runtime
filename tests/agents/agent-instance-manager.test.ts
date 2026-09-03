@@ -29,7 +29,9 @@ describe("AgentInstanceManager getOrCreate identity semantics (Issue #113)", () 
     const manager = new AgentInstanceManager();
     const instance = manager.getOrCreate("new-agent");
     expect(instance.agentId).toBe("new-agent");
-    expect(instance.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    expect(instance.createdAt).toMatch(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    );
   });
 
   it("lists all created instances without duplicates", () => {
@@ -39,12 +41,14 @@ describe("AgentInstanceManager getOrCreate identity semantics (Issue #113)", () 
     manager.getOrCreate("x"); // duplicate call
     const list = manager.list();
     expect(list).toHaveLength(2);
-    const ids = list.map(i => i.agentId).sort();
+    const ids = list.map((i) => i.agentId).sort();
     expect(ids).toEqual(["x", "y"]);
   });
 
   it("rejects empty agentId with INVALID_TASK error", () => {
     const manager = new AgentInstanceManager();
-    expect(() => manager.getOrCreate("")).toThrow(/agentId must be a non-empty string/);
+    expect(() => manager.getOrCreate("")).toThrow(
+      /agentId must be a non-empty string/
+    );
   });
 });

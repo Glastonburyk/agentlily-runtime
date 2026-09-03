@@ -17,13 +17,13 @@ export interface ListMemoryOptions {
 
 export interface InMemoryMemoryStoreOptions {
   /**
-   * Maximum total entries retained across all agents.
-   * Default: 10,000. Set to 0 for unbounded (not recommended in production).
+   * Maximum total entries retained across all agents before FIFO eviction.
+   * Default: 10,000.
    */
   maxEntries?: number;
   /**
-   * Maximum entries retained per individual agent.
-   * Default: 1,000. Set to 0 for unbounded.
+   * Maximum entries retained per individual agent before FIFO eviction.
+   * Default: 1,000. Set to 0 for unbounded per-agent growth.
    */
   maxEntriesPerAgent?: number;
 }
@@ -36,28 +36,41 @@ export interface MemoryStore {
   ): Promise<MemoryEntry[]>;
   countByAgent?(agentId: string): Promise<number>;
   clear?(): Promise<void>;
-  size?(): Promise<number>;
-}
-
-export interface InMemoryMemoryStoreOptions {
-  /** Maximum number of entries to retain in memory before FIFO eviction. Defaults to 10_000. */
-  maxEntries?: number;
 }
 
 export const DEFAULT_MAX_MEMORY_ENTRIES = 10_000;
+export const DEFAULT_MAX_MEMORY_ENTRIES_PER_AGENT = 1_000;
 
 export class InMemoryMemoryStore implements MemoryStore {
   private readonly entries: MemoryEntry[] = [];
-  private readonly maxEntries: number;
-  private readonly maxEntriesPerAgent: number;
 
-  public constructor(options: InMemoryMemoryStoreOptions = {}) {
-    this.maxEntries = options.maxEntries ?? 10_000;
-    this.maxEntriesPerAgent = options.maxEntriesPerAgent ?? 1_000;
+  public readonly maxEntries: number;
+  public readonly maxEntriesPerAgent: number;
+
+  public constructor(options: InMemoryMemoryStoreOptions | number = {}) {
+    const resolved =
+      typeof options === "number" ? { maxEntries: options } : options;
+    const maxEntries = resolved.maxEntries ?? DEFAULT_MAX_MEMORY_ENTRIES;
+
+    if (!Number.isInteger(maxEntries) || maxEntries < 1) {
+      throw new RangeError("maxEntries must be a positive integer.");
+    }
+
+    this.maxEntries = maxEntries;
+    this.maxEntriesPerAgent =
+      resolved.maxEntriesPerAgent ?? DEFAULT_MAX_MEMORY_ENTRIES_PER_AGENT;
+  }
+
+  public get capacity(): number {
+    return this.maxEntries;
+  }
+
+  public get size(): number {
+    return this.entries.length;
   }
 
   public async append(entry: MemoryEntry): Promise<void> {
-    // Clone entry defensively
+    // Clone entry defensively so external mutation cannot corrupt store state.
     const entryCopy: MemoryEntry = {
       agentId: entry.agentId,
       taskId: entry.taskId,
@@ -66,7 +79,7 @@ export class InMemoryMemoryStore implements MemoryStore {
       recordedAt: entry.recordedAt
     };
 
-    // Check per-agent limit
+    // Enforce the per-agent limit by evicting that agent's oldest entry.
     if (this.maxEntriesPerAgent > 0) {
       let agentCount = 0;
       let oldestAgentIndex = -1;
@@ -85,9 +98,8 @@ export class InMemoryMemoryStore implements MemoryStore {
       }
     }
 
-    // Check global capacity limit
-    if (this.maxEntries > 0 && this.entries.length >= this.maxEntries) {
-      // Evict oldest entry (FIFO)
+    // Enforce the global capacity limit by evicting the oldest entry (FIFO).
+    if (this.entries.length >= this.maxEntries) {
       this.entries.shift();
     }
 
@@ -114,10 +126,6 @@ export class InMemoryMemoryStore implements MemoryStore {
       }
     }
     return count;
-  }
-
-  public async size(): Promise<number> {
-    return this.entries.length;
   }
 
   public async clear(): Promise<void> {
@@ -187,16 +195,7 @@ export class JsonFileMemoryStore implements MemoryStore {
   }
 
   public async clear(): Promise<void> {
-    this.entries.length = 0;
-  }
-
-  /** Returns the current number of stored entries. */
-  public get size(): number {
-    return this.entries.length;
-  }
-
-  /** Returns the configured maximum capacity. */
-  public get capacity(): number {
-    return this.maxEntries;
+    this.memoryCache = [];
+    await this.flush();
   }
 }

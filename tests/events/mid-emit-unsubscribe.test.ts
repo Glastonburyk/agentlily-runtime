@@ -23,7 +23,10 @@ describe("RuntimeEventBus listener removal mid-emit", () => {
       calls.push("C");
     });
 
-    bus.emit({ name: "runtime.started", payload: { runtimeId: "mid-emit", occurredAt: new Date().toISOString() } });
+    bus.emit({
+      name: "runtime.started",
+      payload: { runtimeId: "mid-emit", occurredAt: new Date().toISOString() }
+    });
 
     // A fires, removes B, C still fires. B never fires.
     expect(calls).toContain("A");
@@ -45,8 +48,14 @@ describe("RuntimeEventBus listener removal mid-emit", () => {
       calls.push("removed");
     });
 
-    bus.emit({ name: "runtime.started", payload: { runtimeId: "first", occurredAt: new Date().toISOString() } });
-    bus.emit({ name: "runtime.started", payload: { runtimeId: "second", occurredAt: new Date().toISOString() } });
+    bus.emit({
+      name: "runtime.started",
+      payload: { runtimeId: "first", occurredAt: new Date().toISOString() }
+    });
+    bus.emit({
+      name: "runtime.started",
+      payload: { runtimeId: "second", occurredAt: new Date().toISOString() }
+    });
 
     // "removed" should never appear in any emission
     expect(calls.filter((c) => c === "removed")).toHaveLength(0);
@@ -68,7 +77,10 @@ describe("RuntimeEventBus listener removal mid-emit", () => {
     });
     bus.on("runtime.started", spy3);
 
-    bus.emit({ name: "runtime.started", payload: { runtimeId: "cont", occurredAt: new Date().toISOString() } });
+    bus.emit({
+      name: "runtime.started",
+      payload: { runtimeId: "cont", occurredAt: new Date().toISOString() }
+    });
 
     expect(spy1).toHaveBeenCalledTimes(1);
     expect(spy3).toHaveBeenCalledTimes(1);

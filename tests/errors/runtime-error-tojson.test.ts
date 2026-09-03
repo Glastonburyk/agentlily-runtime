@@ -3,7 +3,9 @@ import { RuntimeError } from "../../src/errors/runtime-errors.js";
 
 describe("RuntimeError toJSON serialization (Issue #155)", () => {
   it("includes code and details in JSON.stringify output", () => {
-    const err = new RuntimeError("INVALID_TASK", "bad input", { fieldName: "taskId" });
+    const err = new RuntimeError("INVALID_TASK", "bad input", {
+      fieldName: "taskId"
+    });
     const json = JSON.parse(JSON.stringify(err));
     expect(json.code).toBe("INVALID_TASK");
     expect(json.details).toEqual({ fieldName: "taskId" });
@@ -27,7 +29,9 @@ describe("RuntimeError toJSON serialization (Issue #155)", () => {
   });
 
   it("preserves all fields through JSON round-trip", () => {
-    const original = new RuntimeError("DUPLICATE_TOOL", "dup", { toolName: "echo" });
+    const original = new RuntimeError("DUPLICATE_TOOL", "dup", {
+      toolName: "echo"
+    });
     const restored = JSON.parse(JSON.stringify(original));
     expect(restored.name).toBe("RuntimeError");
     expect(restored.code).toBe("DUPLICATE_TOOL");

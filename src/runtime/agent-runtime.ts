@@ -1,4 +1,5 @@
 import { RuntimeError } from "../errors/runtime-errors.js";
+import type { RuntimeEventBus } from "../events/runtime-events.js";
 import { assertRuntimeStarted } from "../guards/runtime-guards.js";
 import type { RuntimeTask, TaskExecutionResult } from "../tasks/task-types.js";
 import type { ToolDefinition } from "../tools/types.js";
@@ -12,7 +13,7 @@ export interface RuntimeStopOptions {
 }
 
 export class AgentRuntime {
-  private readonly dependencies;
+  private readonly dependencies: ReturnType<typeof createRuntimeDependencies>;
   private readonly runtimeId: string;
   private readonly inFlightTasks = new Set<string>();
   private started = false;
@@ -35,6 +36,14 @@ export class AgentRuntime {
 
   public getInFlightTaskCount(): number {
     return this.inFlightTasks.size;
+  }
+
+  public listTools(): ToolDefinition[] {
+    return this.dependencies.toolRegistry.list();
+  }
+
+  public getDependencies() {
+    return this.dependencies;
   }
 
   public async start(): Promise<void> {
@@ -64,12 +73,25 @@ export class AgentRuntime {
     });
   }
 
-  public async stop(): Promise<void> {
-    if (!this.started) {
+  public async stop(options: RuntimeStopOptions = {}): Promise<void> {
+    if (!this.started || this.stopped) {
       return;
     }
 
+    this.stopped = true;
     this.started = false;
+
+    if (options.drainTimeoutMs !== undefined && options.drainTimeoutMs > 0) {
+      await this.drainInFlightTasks(options.drainTimeoutMs);
+    }
+
+    if (options.clearListeners === true) {
+      const eventBus = this.dependencies.eventBus as RuntimeEventBus & {
+        clear?: () => void;
+      };
+      eventBus.clear?.();
+    }
+
     this.dependencies.logger.info("Runtime stopped.", {
       runtimeId: this.runtimeId
     });
@@ -83,7 +105,6 @@ export class AgentRuntime {
   }
 
   public async executeTask<TPayload, TResult>(
-
     task: RuntimeTask<TPayload>
   ): Promise<TaskExecutionResult<TResult>> {
     assertRuntimeStarted(this.started);
@@ -165,30 +186,18 @@ export class AgentRuntime {
     }
   }
 
-  public listTools(): ToolDefinition[] {
-    return this.dependencies.toolRegistry.list();
-  }
-
-  public getDependencies() {
-    return this.dependencies;
-  }
-
-  public async stop(): Promise<void> {
-    if (!this.started || this.stopped) {
-      return;
-    }
-
-    this.stopped = true;
-    this.started = false;
-    this.dependencies.logger.info("Runtime stopped.", {
-      runtimeId: this.runtimeId
-    });
-    this.dependencies.eventBus.emit({
-      name: "runtime.stopped",
-      payload: {
-        runtimeId: this.runtimeId,
-        occurredAt: new Date().toISOString()
+  private async drainInFlightTasks(timeoutMs: number): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    while (this.inFlightTasks.size > 0) {
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        break;
       }
-    });
+      await this.sleep(Math.min(5, remaining));
+    }
+  }
+
+  private sleep(milliseconds: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { RuntimeEventBus } from "../../src/events/runtime-events";
+import { RuntimeEventBus } from "../../src/events/runtime-events.js";
 
 describe("RuntimeEventBus", () => {
   it("delivers events to registered listeners for that event name", () => {
@@ -12,13 +12,13 @@ describe("RuntimeEventBus", () => {
 
     bus.emit({
       name: "runtime.started",
-      payload: { runtimeId: "rt-1", occurredAt: "2026-09-01T00:00:00Z" },
+      payload: { runtimeId: "rt-1", occurredAt: "2026-09-01T00:00:00Z" }
     });
 
     expect(startedListener).toHaveBeenCalledTimes(1);
     expect(startedListener).toHaveBeenCalledWith({
       name: "runtime.started",
-      payload: { runtimeId: "rt-1", occurredAt: "2026-09-01T00:00:00Z" },
+      payload: { runtimeId: "rt-1", occurredAt: "2026-09-01T00:00:00Z" }
     });
     expect(failedListener).not.toHaveBeenCalled();
   });
@@ -35,8 +35,8 @@ describe("RuntimeEventBus", () => {
         runtimeId: "rt-1",
         taskId: "t-1",
         agentId: "a-1",
-        toolName: "calc",
-      },
+        toolName: "calc"
+      }
     });
 
     expect(listener).toHaveBeenCalledTimes(1);
@@ -49,8 +49,8 @@ describe("RuntimeEventBus", () => {
         runtimeId: "rt-1",
         taskId: "t-2",
         agentId: "a-1",
-        toolName: "calc",
-      },
+        toolName: "calc"
+      }
     });
 
     expect(listener).toHaveBeenCalledTimes(1);
@@ -68,7 +68,7 @@ describe("RuntimeEventBus", () => {
 
     bus.emit({
       name: "runtime.task.received",
-      payload: { runtimeId: "rt-1", taskId: "t-1", agentId: "a-1" },
+      payload: { runtimeId: "rt-1", taskId: "t-1", agentId: "a-1" }
     });
 
     expect(l1).toHaveBeenCalledTimes(1);

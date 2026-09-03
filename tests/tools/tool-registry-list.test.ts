@@ -18,7 +18,7 @@ describe("ToolRegistry list ordering and isolation (Issue #129)", () => {
     registry.register(toolC);
 
     const listed = registry.list();
-    expect(listed.map(t => t.name)).toEqual(["alpha", "beta", "gamma"]);
+    expect(listed.map((t) => t.name)).toEqual(["alpha", "beta", "gamma"]);
   });
 
   it("returns the same object references that were registered", () => {
@@ -39,10 +39,14 @@ describe("ToolRegistry list ordering and isolation (Issue #129)", () => {
     registry.register({ name: "safe", description: "S", execute: () => "s" });
 
     const listed = registry.list();
-    listed.push({ name: "injected", description: "I", execute: () => "i" } as any);
+    listed.push({
+      name: "injected",
+      description: "I",
+      execute: () => "i"
+    } as any);
 
     // Internal registry should not be affected by external array mutation
     expect(registry.list()).toHaveLength(1);
-    expect(registry.list()[0].name).toBe("safe");
+    expect(registry.list()[0]!.name).toBe("safe");
   });
 });

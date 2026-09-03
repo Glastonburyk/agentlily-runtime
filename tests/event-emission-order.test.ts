@@ -12,7 +12,7 @@ describe("Event emission order (Issue #128)", () => {
 
     const runtime = new AgentRuntime({
       runtimeId: "order-success",
-      eventBus,
+      eventBus
     });
 
     runtime.registerTool({
@@ -20,7 +20,7 @@ describe("Event emission order (Issue #128)", () => {
       description: "Always succeeds",
       execute() {
         return { ok: true };
-      },
+      }
     });
 
     await runtime.start();
@@ -29,7 +29,7 @@ describe("Event emission order (Issue #128)", () => {
       agentId: "a1",
       toolName: "ok",
       input: "go",
-      payload: {},
+      payload: {}
     });
 
     const receivedIdx = events.indexOf("runtime.task.received");
@@ -51,7 +51,7 @@ describe("Event emission order (Issue #128)", () => {
 
     const runtime = new AgentRuntime({
       runtimeId: "order-fail",
-      eventBus,
+      eventBus
     });
 
     runtime.registerTool({
@@ -59,7 +59,7 @@ describe("Event emission order (Issue #128)", () => {
       description: "Always throws",
       execute() {
         throw new Error("intentional failure for ordering test");
-      },
+      }
     });
 
     await runtime.start();
@@ -70,7 +70,7 @@ describe("Event emission order (Issue #128)", () => {
         agentId: "a2",
         toolName: "boom",
         input: "fail",
-        payload: {},
+        payload: {}
       });
     } catch {
       // expected

@@ -9,23 +9,21 @@ describe("RuntimeContext fields per task (Issue #149)", () => {
     const recordingTool = {
       name: "recorder",
       description: "records invocation context",
-      parameters: {},
-      execute: async (_params: unknown, ctx: any) => {
-        capturedContext = ctx;
+      inputSchema: {},
+      execute: async (invocation: { context: any }) => {
+        capturedContext = invocation.context;
         return { output: "ok" };
-      },
+      }
     };
 
     const options: RuntimeOptions = {
       runtimeId: "ctx-test-runtime",
       logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
       tools: [recordingTool as any],
-      memory: { append: vi.fn(), listByAgent: vi.fn().mockResolvedValue([]) } as any,
       modelProvider: {
         name: "stub",
-        generate: async () => ({ outputText: "use recorder", metadata: {} }),
-      } as any,
-      state: { get: vi.fn(), set: vi.fn() } as any,
+        generate: async () => ({ outputText: "use recorder", metadata: {} })
+      } as any
     };
 
     const runtime = new AgentRuntime(options);
@@ -34,8 +32,9 @@ describe("RuntimeContext fields per task (Issue #149)", () => {
     await runtime.executeTask({
       taskId: "task-149-abc",
       agentId: "agent-149",
+      toolName: "recorder",
       input: "run recorder",
-      instructions: "call the recorder tool",
+      payload: {}
     });
 
     expect(capturedContext).toBeDefined();
@@ -43,6 +42,8 @@ describe("RuntimeContext fields per task (Issue #149)", () => {
     expect(capturedContext.agent?.agentId).toBe("agent-149");
     expect(capturedContext.runtimeId).toBe("ctx-test-runtime");
     expect(typeof capturedContext.now).toBe("string");
-    expect(new Date(capturedContext.now).toISOString()).toBe(capturedContext.now);
+    expect(new Date(capturedContext.now).toISOString()).toBe(
+      capturedContext.now
+    );
   });
 });

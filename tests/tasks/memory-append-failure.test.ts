@@ -7,8 +7,10 @@ describe("TaskRunner memory append failure propagation", () => {
 
   it("propagates memory store append rejection as EXECUTION_FAILED with cause", async () => {
     const throwingStore = {
-      append: async () => { throw new Error("DB connection lost"); },
-      listByAgent: async () => [],
+      append: async () => {
+        throw new Error("DB connection lost");
+      },
+      listByAgent: async () => []
     };
 
     const runner = new TaskRunner(stubExecutor as any, throwingStore as any);
@@ -16,7 +18,13 @@ describe("TaskRunner memory append failure propagation", () => {
 
     try {
       await runner.run(
-        { taskId: "t1", agentId: "a1", toolName: "noop", input: "go", payload: {} },
+        {
+          taskId: "t1",
+          agentId: "a1",
+          toolName: "noop",
+          input: "go",
+          payload: {}
+        },
         ctx
       );
       expect.fail("should have thrown");
@@ -29,7 +37,9 @@ describe("TaskRunner memory append failure propagation", () => {
 
   it("preserves original RuntimeError from executor without wrapping", async () => {
     const failingExecutor = {
-      execute: async () => { throw new RuntimeError("TOOL_NOT_FOUND", "Tool missing"); },
+      execute: async () => {
+        throw new RuntimeError("TOOL_NOT_FOUND", "Tool missing");
+      }
     };
     const noopStore = { append: async () => {}, listByAgent: async () => [] };
 
@@ -38,7 +48,13 @@ describe("TaskRunner memory append failure propagation", () => {
 
     try {
       await runner.run(
-        { taskId: "t2", agentId: "a2", toolName: "missing", input: "go", payload: {} },
+        {
+          taskId: "t2",
+          agentId: "a2",
+          toolName: "missing",
+          input: "go",
+          payload: {}
+        },
         ctx
       );
       expect.fail("should have thrown");

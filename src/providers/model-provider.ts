@@ -19,8 +19,8 @@ export class UnconfiguredModelProvider implements ModelProvider {
   public async generate(prompt: ModelPrompt): Promise<ModelResponse> {
     console.warn(
       "UnconfiguredModelProvider: no model provider is configured. " +
-      "generate() was called but will return placeholder text. " +
-      "Configure a real ModelProvider to enable AI-powered task execution."
+        "generate() was called but will return placeholder text. " +
+        "Configure a real ModelProvider to enable AI-powered task execution."
     );
 
     return {

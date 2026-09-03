@@ -1,16 +1,9 @@
-import { existsSync } from "node:fs";
-import { rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   AgentRuntime,
-  createPaymentPrepTool,
   InMemoryRuntimeLogger,
-  PAYMENT_PREP_TOOL_NAME,
   RuntimeEventBus
 } from "../src/index.js";
-import type { PaymentPrepPayload, PaymentPrepResult } from "../src/index.js";
 
 describe("AgentRuntime", () => {
   it("executes a happy-path task and records memory", async () => {
@@ -163,7 +156,6 @@ describe("AgentRuntime", () => {
     });
   });
 
-
   it("stops the runtime, emits runtime.stopped event, and rejects subsequent tasks", async () => {
     const eventBus = new RuntimeEventBus();
     const stoppedEvents: { runtimeId: string; occurredAt: string }[] = [];
@@ -201,4 +193,3 @@ describe("AgentRuntime", () => {
     expect(stoppedEvents).toHaveLength(1);
   });
 });
-

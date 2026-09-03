@@ -18,12 +18,18 @@ describe("AgentRuntime double-start rejection", () => {
   });
 
   it("does not emit runtime.started event twice", async () => {
-    const { RuntimeEventBus } = await import("../../src/events/runtime-events.js");
+    const { RuntimeEventBus } =
+      await import("../../src/events/runtime-events.js");
     const eventBus = new RuntimeEventBus();
     const startedEvents: string[] = [];
-    eventBus.on("runtime.started", (e) => startedEvents.push(e.payload.runtimeId));
+    eventBus.on("runtime.started", (e) =>
+      startedEvents.push(e.payload.runtimeId)
+    );
 
-    const runtime = new AgentRuntime({ runtimeId: "double-start-events", eventBus });
+    const runtime = new AgentRuntime({
+      runtimeId: "double-start-events",
+      eventBus
+    });
     await runtime.start();
 
     try {
