@@ -232,5 +232,39 @@ describe("TaskRunner error propagation", () => {
       message: "Tool already registered",
       details: { toolName: "duplicate_tool" }
     });
+
+    const runner = new TaskRunner(
+      new ActionExecutor(toolRegistry),
+      new InMemoryMemoryStore()
+    );
+    const agent = new AgentInstanceManager().getOrCreate("agent-1");
+
+    let caught: unknown;
+    try {
+      await runner.run(
+        {
+          taskId: "task-6",
+          agentId: "agent-1",
+          toolName: "typedExplode",
+          input: "Trigger failure",
+          payload: {}
+        },
+        {
+          runtimeId: "runtime-1",
+          taskId: "task-6",
+          agent,
+          memory: new InMemoryMemoryStore(),
+          modelProvider: new UnconfiguredModelProvider(),
+          state: new InMemoryRuntimeStateStore(),
+          now: new Date().toISOString()
+        }
+      );
+    } catch (err) {
+      caught = err;
+    }
+
+    expect(caught).toBeInstanceOf(RuntimeError);
+    expect((caught as RuntimeError).code).toBe("TOOL_NOT_FOUND");
+    expect((caught as RuntimeError).message).toBe("Missing dependency");
   });
 });
