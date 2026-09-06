@@ -12,6 +12,13 @@ export interface RuntimeStopOptions {
   drainTimeoutMs?: number;
 }
 
+export interface RuntimeStoppedPayload {
+  runtimeId: string;
+  occurredAt: string;
+  strandedTaskIds?: string[];
+  drainDurationMs?: number;
+}
+
 export class AgentRuntime {
   private readonly dependencies: ReturnType<typeof createRuntimeDependencies>;
   private readonly runtimeId: string;
@@ -82,6 +89,9 @@ export class AgentRuntime {
     this.stopped = true;
     this.started = false;
 
+    const drainStartMs = Date.now();
+    let strandedTaskIds: string[] = [];
+
     if (options.drainTimeoutMs !== undefined && options.drainTimeoutMs > 0) {
       await this.awaitInFlightTasks(options.drainTimeoutMs);
     }
@@ -109,6 +119,11 @@ export class AgentRuntime {
       });
     }
 
+    // Clear in-flight tracking — runtime is stopped, no new tasks can start.
+    // Stranded tasks that are still running will clean themselves up via their
+    // finally blocks when they eventually resolve/reject.
+    this.inFlightTasks.clear();
+
     if (options.clearListeners === true) {
       const eventBus = this.dependencies.eventBus as RuntimeEventBus & {
         clear?: () => void;
@@ -116,15 +131,36 @@ export class AgentRuntime {
       eventBus.clear?.();
     }
 
-    this.dependencies.logger.info("Runtime stopped.", {
-      runtimeId: this.runtimeId
-    });
+    const drainDurationMs = Date.now() - drainStartMs;
+
+    if (strandedTaskIds.length > 0) {
+      this.dependencies.logger.warn(
+        "Runtime stopped with stranded in-flight tasks.",
+        {
+          runtimeId: this.runtimeId,
+          strandedTaskIds,
+          drainDurationMs
+        }
+      );
+    } else {
+      this.dependencies.logger.info("Runtime stopped.", {
+        runtimeId: this.runtimeId,
+        drainDurationMs
+      });
+    }
+
+    const stoppedPayload: RuntimeStoppedPayload = {
+      runtimeId: this.runtimeId,
+      occurredAt: new Date().toISOString(),
+      drainDurationMs
+    };
+    if (strandedTaskIds.length > 0) {
+      stoppedPayload.strandedTaskIds = strandedTaskIds;
+    }
+
     this.dependencies.eventBus.emit({
       name: "runtime.stopped",
-      payload: {
-        runtimeId: this.runtimeId,
-        occurredAt: new Date().toISOString()
-      }
+      payload: stoppedPayload
     });
   }
 
