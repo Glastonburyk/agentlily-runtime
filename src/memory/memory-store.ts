@@ -136,13 +136,27 @@ export class InMemoryMemoryStore implements MemoryStore {
 export class JsonFileMemoryStore implements MemoryStore {
   private readonly filePath: string;
   private memoryCache: MemoryEntry[] | null = null;
+  public readonly maxEntries: number;
 
-  public constructor(filePath: string) {
+  public constructor(filePath: string, options: { maxEntries?: number } = {}) {
     this.filePath = filePath;
+    this.maxEntries = options.maxEntries ?? DEFAULT_MAX_MEMORY_ENTRIES;
+    if (!Number.isInteger(this.maxEntries) || this.maxEntries < 1) {
+      throw new RangeError("maxEntries must be a positive integer.");
+    }
   }
 
   public getFilePath(): string {
     return this.filePath;
+  }
+
+  public get capacity(): number {
+    return this.maxEntries;
+  }
+
+  public async size(): Promise<number> {
+    const entries = await this.loadEntries();
+    return entries.length;
   }
 
   private async loadEntries(): Promise<MemoryEntry[]> {
@@ -189,7 +203,19 @@ export class JsonFileMemoryStore implements MemoryStore {
 
   public async append(entry: MemoryEntry): Promise<void> {
     const entries = await this.loadEntries();
-    entries.push(entry);
+    const entryCopy: MemoryEntry = {
+      agentId: entry.agentId,
+      taskId: entry.taskId,
+      input: entry.input,
+      output: entry.output,
+      recordedAt: entry.recordedAt
+    };
+
+    if (entries.length >= this.maxEntries) {
+      entries.shift();
+    }
+
+    entries.push(entryCopy);
     await this.flush();
   }
 
