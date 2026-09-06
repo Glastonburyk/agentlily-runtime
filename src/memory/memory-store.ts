@@ -179,8 +179,7 @@ export class JsonFileMemoryStore implements MemoryStore {
     }
 
     if (!existsSync(this.filePath)) {
-      this.memoryCache = [];
-      return this.memoryCache;
+      return [];
     }
 
     const raw = await readFile(this.filePath, "utf-8");
