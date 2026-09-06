@@ -51,6 +51,7 @@ export type {
 } from "./events/runtime-events.js";
 export type {
   ConsoleRuntimeLoggerOptions,
+  InMemoryRuntimeLoggerOptions,
   RuntimeLogger,
   RuntimeLogLevel
 } from "./logger/runtime-logger.js";
