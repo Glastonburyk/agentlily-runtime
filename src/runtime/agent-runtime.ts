@@ -1,7 +1,10 @@
 import { RuntimeError } from "../errors/runtime-errors.js";
 import { assertNonEmptyValue } from "../guards/runtime-guards.js";
 import type { RuntimeEventBus } from "../events/runtime-events.js";
-import { assertRuntimeStarted } from "../guards/runtime-guards.js";
+import {
+  assertNonEmptyValue,
+  assertRuntimeStarted
+} from "../guards/runtime-guards.js";
 import type { RuntimeTask, TaskExecutionResult } from "../tasks/task-types.js";
 import type { ToolDefinition } from "../tools/types.js";
 import { createRuntimeDependencies } from "./bootstrap.js";
