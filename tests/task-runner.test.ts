@@ -10,13 +10,14 @@ import {
   RuntimeError,
   type RuntimeErrorCode
 } from "../src/index.js";
+import { RuntimeError } from "../src/errors/runtime-errors.js";
 
-describe("TaskRunner", () => {
-  it("wraps unexpected tool failures in EXECUTION_FAILED", async () => {
+describe("TaskRunner error propagation", () => {
+  it("wraps plain Error in EXECUTION_FAILED", async () => {
     const toolRegistry = new ToolRegistry();
     toolRegistry.register({
       name: "explode",
-      description: "Throws unexpectedly",
+      description: "Throws a plain Error",
       execute() {
         throw new Error("boom");
       }
