@@ -63,11 +63,9 @@ describe("InMemoryMemoryStore property-based tests", () => {
             ...new Set(entries.map((entry: MemoryEntry) => entry.agentId))
           ];
           for (const agentId of uniqueAgents) {
-            const filtered = entries.filter((e) => e.agentId === agentId);
-            const listed = await store.listByAgent(agentId);
-            expect(listed.map((e) => e.taskId)).toEqual(
-              filtered.map((e) => e.taskId)
-            );
+            const expected = entries.filter((e) => e.agentId === agentId);
+            const actual = await store.listByAgent(agentId);
+            expect(actual).toEqual(expected);
           }
         }
       ),
@@ -78,19 +76,16 @@ describe("InMemoryMemoryStore property-based tests", () => {
   it("listByAgent returns empty array for unknown agent after arbitrary appends", async () => {
     await fc.assert(
       fc.asyncProperty(
-        fc.array(entryArb, { maxLength: 50 }),
-        agentIdArb,
-        async (entries, unknownAgent) => {
+        fc.array(entryArb, { minLength: 0, maxLength: 100 }),
+        fc.string({ minLength: 1, maxLength: 20 }).filter((s) => !s.startsWith("known")),
+        async (entries, unknownAgentId) => {
           const store = new InMemoryMemoryStore();
           for (const entry of entries) {
             await store.append(entry);
           }
 
-          const wasUsed = entries.some((e) => e.agentId === unknownAgent);
-          if (!wasUsed) {
-            const result = await store.listByAgent(unknownAgent);
-            expect(result).toEqual([]);
-          }
+          const actual = await store.listByAgent(unknownAgentId);
+          expect(actual).toEqual([]);
         }
       ),
       { numRuns: 50 }
