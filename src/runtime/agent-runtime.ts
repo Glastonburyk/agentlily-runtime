@@ -168,6 +168,12 @@ export class AgentRuntime {
     });
   }
 
+  /**
+   * Execute a task on the runtime.
+   *
+   * Note: Task IDs must be unique while in flight. Attempting to start a task with
+   * a `taskId` that is already actively running will reject with a DUPLICATE_IN_FLIGHT_TASK error.
+   */
   public async executeTask<TPayload, TResult>(
     task: RuntimeTask<TPayload>
   ): Promise<TaskExecutionResult<TResult>> {
