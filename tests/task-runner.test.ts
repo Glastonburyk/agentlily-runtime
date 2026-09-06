@@ -16,6 +16,8 @@ import { RuntimeError } from "../src/errors/runtime-errors.js";
 describe("TaskRunner error propagation", () => {
   it("wraps plain Error in EXECUTION_FAILED", async () => {
     const toolRegistry = new ToolRegistry();
+    const expected = new Error("boom");
+
     toolRegistry.register({
       name: "explode",
       description: "Throws a plain Error",
@@ -27,10 +29,10 @@ describe("TaskRunner error propagation", () => {
     await expect(
       runner.run(
         {
-          taskId: "task-5",
+          taskId: "task-6",
           agentId: "agent-1",
-          toolName: "explode",
-          input: "Trigger failure",
+          toolName: "missing",
+          input: "Trigger typed failure",
           payload: {}
         },
         createContext("task-5")
