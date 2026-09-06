@@ -29,9 +29,49 @@ export class ActionExecutor {
 
     if (typeof maxToolCallsPerTaskOrLogger === "number") {
       this.maxToolCallsPerTask = maxToolCallsPerTaskOrLogger;
-      this.logger = undefined;
-    } else {
+      if (
+        eventBusOrLogger !== undefined &&
+        "emit" in eventBusOrLogger &&
+        typeof eventBusOrLogger.emit === "function"
+      ) {
+        this.eventBus = eventBusOrLogger;
+        this.logger = logger;
+      } else {
+        this.eventBus = undefined;
+        this.logger = (eventBusOrLogger as RuntimeLogger | undefined) ?? logger;
+      }
+    } else if (
+      maxToolCallsPerTaskOrLogger !== undefined &&
+      typeof maxToolCallsPerTaskOrLogger === "object" &&
+      ("info" in maxToolCallsPerTaskOrLogger ||
+        "warn" in maxToolCallsPerTaskOrLogger ||
+        "debug" in maxToolCallsPerTaskOrLogger ||
+        "error" in maxToolCallsPerTaskOrLogger)
+    ) {
+      this.maxToolCallsPerTask = undefined;
       this.logger = maxToolCallsPerTaskOrLogger;
+      if (
+        eventBusOrLogger !== undefined &&
+        "emit" in eventBusOrLogger &&
+        typeof eventBusOrLogger.emit === "function"
+      ) {
+        this.eventBus = eventBusOrLogger;
+      } else {
+        this.eventBus = undefined;
+      }
+    } else {
+      this.maxToolCallsPerTask = undefined;
+      if (
+        eventBusOrLogger !== undefined &&
+        "emit" in eventBusOrLogger &&
+        typeof eventBusOrLogger.emit === "function"
+      ) {
+        this.eventBus = eventBusOrLogger;
+        this.logger = logger;
+      } else {
+        this.eventBus = undefined;
+        this.logger = (eventBusOrLogger as RuntimeLogger | undefined) ?? logger;
+      }
     }
     this.eventBus = eventBus;
     this.maxTrackedTasks = maxTrackedTasks;
