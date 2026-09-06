@@ -1,9 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   ActionExecutor,
   AgentInstanceManager,
   InMemoryMemoryStore,
   InMemoryRuntimeStateStore,
+  RuntimeError,
+  RuntimeEventBus,
   ToolRegistry,
   UnconfiguredModelProvider
 } from "../src/index.js";
