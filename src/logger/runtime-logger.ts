@@ -129,6 +129,7 @@ export interface InMemoryLogEntry {
 
 export class InMemoryRuntimeLogger implements RuntimeLogger {
   public readonly entries: InMemoryLogEntry[] = [];
+  public readonly level?: RuntimeLogLevel;
   private readonly maxEntries: number;
   private readonly minimumLevel: RuntimeLogLevel | undefined;
   private readonly redactKeys: RegExp;
