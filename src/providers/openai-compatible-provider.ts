@@ -164,3 +164,15 @@ export class OpenAICompatibleModelProvider implements ModelProvider {
     };
   }
 }
+
+function formatBodyExcerpt(body: string): string {
+  const compact = body.replace(/\s+/g, " ").trim();
+  if (compact.length === 0) {
+    return "<empty body>";
+  }
+
+  const maxLength = 500;
+  return compact.length > maxLength
+    ? `${compact.slice(0, maxLength)}...`
+    : compact;
+}
