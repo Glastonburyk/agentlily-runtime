@@ -10,6 +10,13 @@ function resolveAgentId(
   return agent?.agentId ?? agent?.id ?? "";
 }
 
+export interface ActionExecutorOptions {
+  maxToolCallsPerTask?: number | undefined;
+  maxTrackedTasks?: number | undefined;
+  logger?: RuntimeLogger | undefined;
+  eventBus?: RuntimeEventBus | undefined;
+}
+
 export class ActionExecutor {
   private readonly toolCallCounts = new Map<string, number>();
   private readonly logger: RuntimeLogger | undefined;
