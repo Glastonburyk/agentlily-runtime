@@ -8,10 +8,16 @@ import type { RuntimeTask, TaskExecutionResult } from "./task-types.js";
 export class TaskRunner {
   private readonly actionExecutor: ActionExecutor;
   private readonly memoryStore: MemoryStore;
+  private readonly timeoutMs: number | undefined;
 
-  public constructor(actionExecutor: ActionExecutor, memoryStore: MemoryStore) {
+  public constructor(
+    actionExecutor: ActionExecutor,
+    memoryStore: MemoryStore,
+    timeoutMs?: number
+  ) {
     this.actionExecutor = actionExecutor;
     this.memoryStore = memoryStore;
+    this.timeoutMs = timeoutMs;
   }
 
   public async run<TPayload, TResult>(
@@ -65,5 +71,43 @@ export class TaskRunner {
       completedAt,
       durationMs
     };
+  }
+
+  private async executeWithTimeout<TPayload, TResult>(
+    toolName: string,
+    payload: TPayload,
+    context: RuntimeContext
+  ): Promise<TResult> {
+    const execution = this.actionExecutor.execute<TPayload, TResult>(
+      toolName,
+      payload,
+      context
+    );
+    const timeoutMs = this.timeoutMs;
+
+    if (timeoutMs === undefined) {
+      return execution;
+    }
+
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timeoutHandle = setTimeout(() => {
+        reject(
+          new RuntimeError(
+            "EXECUTION_FAILED",
+            `Task execution timed out after ${timeoutMs}ms.`,
+            { timeoutMs }
+          )
+        );
+      }, timeoutMs);
+    });
+
+    try {
+      return await Promise.race([execution, timeout]);
+    } finally {
+      if (timeoutHandle !== undefined) {
+        clearTimeout(timeoutHandle);
+      }
+    }
   }
 }
