@@ -39,6 +39,8 @@ export class ActionExecutor {
     payload: TPayload,
     context: RuntimeContext
   ): Promise<TResult> {
+    const tool = this.toolRegistry.get(toolName);
+
     const currentCount = this.getToolCallCount(context.taskId);
     if (this.maxToolCallsPerTask !== undefined) {
       assertMaxToolCalls(currentCount, this.maxToolCallsPerTask);
