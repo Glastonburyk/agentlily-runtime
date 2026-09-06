@@ -25,7 +25,7 @@ The current implementation demonstrates a narrow, credible runtime path:
 3. Build a runtime context for a task
 4. Execute a task through the task runner and action executor
 5. Invoke a typed tool
-6. Persist lightweight in-memory task history
+6. Persist lightweight in-memory task history (or durable JSON file history via memoryStoragePath)
 7. Emit runtime events and structured log entries
 
 This gives contributors a working reference path without locking the project
@@ -37,7 +37,7 @@ The following areas are scaffolded with interfaces, types, or placeholders and
 are expected to become contributor work:
 
 - Wallet-aware and payment-aware actions
-- Persistent memory and state backends
+- Persistent database and vector storage backends (basic file-based JSON persistence is supported via JsonFileMemoryStore)
 - Model provider integrations (an `OpenAICompatibleModelProvider` scaffold is available for experimentation; note that it is scaffolded and intentionally not production-complete)
 - Runtime policy engines and approval flows
 - Long-running orchestration and scheduling
