@@ -95,10 +95,11 @@ export class OpenAICompatibleModelProvider implements ModelProvider {
       throw new Error(`OpenAI-compatible provider request failed: ${message}`);
     }
 
+    const rawBody = await response.text().catch(() => "");
+
     if (!response.ok) {
-      const errorText = await response.text().catch(() => "");
       throw new Error(
-        `OpenAI-compatible provider returned HTTP ${response.status}: ${errorText}`
+        `OpenAI-compatible provider returned HTTP ${response.status}: ${rawBody}`
       );
     }
 
