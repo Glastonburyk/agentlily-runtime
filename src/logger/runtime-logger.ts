@@ -121,7 +121,7 @@ export interface InMemoryRuntimeLoggerOptions {
   redactKeys?: RegExp;
 }
 
-interface InMemoryLogEntry {
+export interface InMemoryLogEntry {
   level: RuntimeLogLevel;
   message: string;
   metadata: Record<string, unknown> | undefined;
